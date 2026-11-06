@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Jose's World — José Miguel Féliz</title>
+    <meta name="description" content="José Miguel Féliz — Computer Science & Economics at Williams College. A scroll-driven, block-world portfolio." />
+    <meta name="theme-color" content="#1a0f0a" />
+    <meta property="og:title" content="Jose's World — José Miguel Féliz" />
+    <meta property="og:description" content="A first-person, block-world portfolio. Scroll to explore." />
+    <meta property="og:type" content="website" />
+    <!-- TODO: once the site has its final domain, make this an absolute URL (https://your-domain/og.jpg) -->
+    <meta property="og:image" content="./og.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="./og.jpg" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%238a5a2b'/%3E%3Crect width='16' height='5' fill='%236fae5a'/%3E%3Crect y='5' width='16' height='1' fill='%235a8a44'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <canvas id="gl"></canvas>
+    <div id="scroller" aria-hidden="true"></div>
+
+    <div id="ui">
+      <!-- loading screen -->
+      <div id="loader" role="dialog" aria-label="Loading">
+        <div class="loader-inner">
+          <div class="loader-logo"><span>JOSE'S</span><span>WORLD</span></div>
+          <div class="loader-sub" data-i18n="subtitle"></div>
+          <div class="loader-bar"><div class="loader-fill"></div></div>
+          <div class="loader-status"><span id="loader-msg" data-i18n="loading"></span></div>
+          <div class="loader-actions">
+            <button id="enter-btn" class="mc-btn big" disabled><span data-i18n="enter"></span></button>
+            <label class="mc-check"><input type="checkbox" id="sound-check" /> <span data-i18n="sound"></span></label>
+          </div>
+          <div class="loader-lang">
+            <button class="lang-btn" data-lang="en">English</button><button class="lang-btn" data-lang="es">Español</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HUD -->
+      <div id="hud" class="hidden">
+        <div class="hud-top">
+          <div class="wordmark">JOSE'S WORLD <span class="chapter" id="chapter-label"></span></div>
+          <div class="hud-controls">
+            <button id="lang-toggle" class="mc-btn small" data-i18n-title="language">ES</button>
+            <button id="sound-toggle" class="mc-btn small" data-i18n-title="sound" aria-pressed="false">🔈</button>
+          </div>
+        </div>
+        <div class="crosshair" aria-hidden="true"></div>
+        <div class="hud-bottom">
+          <div class="xp"><div class="xp-fill" id="xp-fill"></div><div class="xp-level" id="xp-level">1</div></div>
+          <div class="hotbar" id="hotbar"></div>
+        </div>
+        <div class="scroll-hint" id="scroll-hint"><span data-i18n="start"></span><div class="mouse"><div class="wheel"></div></div></div>
+      </div>
+
+      <!-- title card (after landing) -->
+      <div id="title-card" class="hidden">
+        <div class="title-sub" data-i18n="subtitle"></div>
+        <button id="start-btn" class="mc-btn big"><span data-i18n="startBtn"></span></button>
+      </div>
+
+      <!-- story panels -->
+      <aside id="panel-about" class="panel left hidden">
+        <div class="panel-kicker" id="about-heading"></div>
+        <h2 class="panel-title" id="about-title"></h2>
+        <p class="panel-text" id="about-text"></p>
+        <div class="panel-dots" id="about-dots"></div>
+      </aside>
+
+      <div id="hotspots"></div>
+
+      <div id="caption" class="caption hidden"></div>
+
+      <aside id="panel-course" class="panel right hidden">
+        <div class="panel-kicker"><span class="dept-chip" id="course-dept"></span> <span id="course-index"></span></div>
+        <h2 class="panel-title" id="course-title"></h2>
+        <div class="panel-kicker small" data-i18n="topics"></div>
+        <ul class="topics" id="course-topics"></ul>
+      </aside>
+
+      <div id="portal-fade"></div>
+
+      <section id="end-card" class="hidden">
+        <div class="end-inner">
+          <div class="panel-kicker">Episode 1 · ✓</div>
+          <h2 class="end-title" data-i18n="endTitle"></h2>
+          <p class="panel-text" data-i18n="endText"></p>
+          <div class="links">
+            <a class="mc-btn" id="link-email" href="mailto:jmf11@williams.edu"><span data-i18n="email"></span></a>
+            <a class="mc-btn" href="https://www.linkedin.com/in/jose-feliz-cuevas/" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="mc-btn" href="https://github.com/josemiguelfzcv" target="_blank" rel="noopener">GitHub</a>
+          </div>
+          <div class="email-line"><code id="email-text">jmf11@williams.edu</code><button id="copy-email" class="mc-btn small" type="button">Copy</button><span id="copy-done" class="copy-done" aria-live="polite"></span></div>
+          <div class="soon" id="soon-list"></div>
+        </div>
+      </section>
+    </div>
+
+    <noscript><p style="color:#fff;padding:2rem;font-family:sans-serif">This portfolio needs JavaScript and WebGL. Email: jmf11@williams.edu</p></noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
