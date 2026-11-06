@@ -57,12 +57,19 @@ export function createOverworld(atlas: THREE.DataArrayTexture, quality: Quality,
   if (foliage) foliage.receiveShadow = true;
 
   // ---- title ----
-  const titleGeo = buildTitleGeometry(["JOSE'S", 'WORLD'], B.Quartz);
+  // "WELCOME TO" (small) over "JOSE'S / WORLD" (big), softly self-lit so it reads against the dusk sky
+  const titleGeo = buildTitleGeometry(["JOSE'S", 'WORLD'], B.Gold, 11);
   const title = new THREE.Mesh(titleGeo.geo, matOpaque);
-  title.castShadow = false; title.receiveShadow = true;
-  title.scale.setScalar(0.65);
-  title.position.set(68, 39, 33);
+  title.castShadow = false; title.receiveShadow = false;
+  title.scale.setScalar(0.85);
+  title.position.set(70, 38, 40);
   scene.add(title);
+  const welcomeGeo = buildTitleGeometry(['WELCOME TO'], B.Gold, 11);
+  const welcome = new THREE.Mesh(welcomeGeo.geo, matOpaque);
+  welcome.castShadow = false; welcome.receiveShadow = false;
+  welcome.scale.setScalar(0.48);
+  welcome.position.set(70, 38 + titleGeo.height * 0.85 + 1.4, 40);
+  scene.add(welcome);
 
   // ---- sky / sun ----
   const sky = createSky(SUN_DIR, { zenith: '#6f8fcf', horizon, glow: '#ffd27a', ground: '#8a6a4a' });

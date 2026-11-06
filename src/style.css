@@ -52,7 +52,8 @@ button, a.mc-btn, .mc-check, .lang-btn { pointer-events: auto; }
 .loader-inner { position: relative; display: flex; flex-direction: column; align-items: center; gap: 1.1rem; text-align: center; padding: 1rem var(--gutter); max-width: 720px; }
 .loader-logo { font-family: var(--pixel); font-weight: 700; line-height: 0.95; display: flex; flex-direction: column; align-items: center;
   font-size: clamp(3rem, 11vw, 6.5rem); color: #fff; text-shadow: 0 0 24px rgba(255, 200, 120, 0.35), 4px 4px 0 #3b2510, 6px 6px 0 rgba(0,0,0,0.5); }
-.loader-logo span:nth-child(2) { font-size: 0.7em; color: var(--accent); letter-spacing: 0.08em; }
+.loader-logo span:nth-child(3) { font-size: 0.7em; color: var(--accent); letter-spacing: 0.08em; }
+.loader-logo .pre { font-size: 0.3em; font-weight: 600; letter-spacing: 0.3em; color: var(--ink-dim); margin-bottom: 0.6em; }
 .loader-sub { font-family: var(--sans); color: var(--ink-dim); font-size: 0.95rem; }
 .loader-bar { width: min(420px, 80vw); height: 14px; border: 2px solid #111; background: #2a2a2a; box-shadow: inset 0 0 0 2px #4a4a4a; }
 .loader-fill { height: 100%; width: 0%; background: linear-gradient(#8ddc78, #5fb860); transition: width 0.25s ease; }

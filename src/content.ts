@@ -101,7 +101,7 @@ export const ABOUT: L<{ heading: string; beats: { title: string; text: string }[
     beats: [
       { title: 'Born in Barahona, Dominican Republic', text: 'I grew up around my family\'s business. Near the end of high school I discovered how U.S. college applications worked — and knew that was where I wanted to study. So I took a gap year to build my application from scratch, and it got me to Williams College.' },
       { title: 'Debate, Model Congress, Model UN', text: 'In high school I lived for debate. I arrived at Williams convinced I would study Political Science and Economics.' },
-      { title: 'Then came CS 134', text: 'My first computer-science class changed the plan. I fell in love with building things. Today I\'m a Computer Science & Economics major who loves to build — and wants to go deep into developing artificial intelligence.' },
+      { title: 'Then came CS 134', text: 'My first computer-science class changed the plan. I fell in love with building things. Today I\'m a Computer Science major who loves to build — and wants to go deep into developing artificial intelligence.' },
     ],
   },
   es: {
@@ -109,7 +109,7 @@ export const ABOUT: L<{ heading: string; beats: { title: string; text: string }[
     beats: [
       { title: 'Nací en Barahona, República Dominicana', text: 'Crecí alrededor del negocio de mi familia. Casi al terminar la secundaria descubrí cómo funcionaban las aplicaciones a universidades en EE. UU., y tuve claro que quería estudiar allá. Me tomé un año sabático para preparar mi aplicación desde cero, y eso me llevó a Williams College.' },
       { title: 'Debate, Modelo de Congreso, Modelo de la ONU', text: 'En secundaria vivía para el debate. Llegué a Williams convencido de que estudiaría Ciencias Políticas y Economía.' },
-      { title: 'Y entonces llegó CS 134', text: 'Mi primera clase de computación cambió el plan. Me enamoré de construir cosas. Hoy soy estudiante de Computer Science y Economía al que le encanta construir, y quiero adentrarme en el desarrollo de la inteligencia artificial.' },
+      { title: 'Y entonces llegó CS 134', text: 'Mi primera clase de computación cambió el plan. Me enamoré de construir cosas. Hoy soy estudiante de Computer Science al que le encanta construir, y quiero adentrarme en el desarrollo de la inteligencia artificial.' },
     ],
   },
 };
@@ -123,7 +123,7 @@ export const CONTACT = {
 export const UI: Record<string, L> = {
   loading: { en: 'Loading Jose\'s World', es: 'Cargando el mundo de José' },
   enter: { en: 'Click to enter', es: 'Haz clic para entrar' },
-  subtitle: { en: 'José Miguel Féliz · Computer Science & Economics · Williams College', es: 'José Miguel Féliz · Computer Science y Economía · Williams College' },
+  subtitle: { en: 'José Miguel Féliz · Computer Science · Williams College', es: 'José Miguel Féliz · Computer Science · Williams College' },
   start: { en: 'Scroll to explore', es: 'Haz scroll para explorar' },
   startBtn: { en: 'Start the story', es: 'Empezar la historia' },
   chapterSpawn: { en: 'Spawn', es: 'Inicio' },

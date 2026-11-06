@@ -11,7 +11,7 @@ export function renderFallback() {
     <div style="position:absolute;inset:0;overflow:auto;background:#1a0f0a;color:#f8f1e4;font-family:Inter,system-ui,sans-serif;padding:48px 24px">
       <div style="max-width:720px;margin:0 auto">
         <h1 style="font-family:'Pixelify Sans',monospace;font-size:3rem;margin:0 0 .25rem">JOSE'S WORLD</h1>
-        <p style="opacity:.75;margin:0 0 2rem">José Miguel Féliz · Computer Science & Economics · Williams College</p>
+        <p style="opacity:.75;margin:0 0 2rem">José Miguel Féliz · Computer Science · Williams College</p>
         <p style="opacity:.75">${lang === 'es' ? 'Tu navegador no soporta WebGL2, así que aquí está la versión clásica.' : 'Your browser does not support WebGL2, so here is the classic version.'}</p>
         <h2 style="font-family:'Pixelify Sans',monospace">${about.heading}</h2>
         ${about.beats.map(b => `<h3>${b.title}</h3><p>${b.text}</p>`).join('')}

@@ -322,11 +322,14 @@ const GLYPHS: Record<string, string[]> = {
   R: ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
   L: ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
   D: ['11110', '10001', '10001', '10001', '10001', '10001', '11110'],
+  C: ['01110', '10001', '10000', '10000', '10000', '10001', '01110'],
+  M: ['10001', '11011', '10101', '10101', '10001', '10001', '10001'],
+  T: ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
   ' ': ['00000', '00000', '00000', '00000', '00000', '00000', '00000'],
 };
 
 /** Builds "JOSE'S / WORLD" as voxel letters in its own little world. Returns geometry centred at x=0. */
-export function buildTitleGeometry(lines: string[], block = B.Quartz): { geo: THREE.BufferGeometry; width: number; height: number } {
+export function buildTitleGeometry(lines: string[], block = B.Quartz, glow = 0): { geo: THREE.BufferGeometry; width: number; height: number } {
   const maxLen = Math.max(...lines.map(l => l.length));
   const width = maxLen * 6 - 1, height = lines.length * 9 - 2;
   const tw = new World(width + 2, height + 2, 3);
@@ -337,7 +340,10 @@ export function buildTitleGeometry(lines: string[], block = B.Quartz): { geo: TH
     [...line].forEach((ch, ci) => {
       const g = GLYPHS[ch.toUpperCase()] ?? GLYPHS[' '];
       for (let r = 0; r < 7; r++) for (let c = 0; c < 5; c++) {
-        if (g[r][c] === '1') tw.set(ox + ci * 6 + c, oy + (6 - r), 1, block);
+        if (g[r][c] === '1') {
+          tw.set(ox + ci * 6 + c, oy + (6 - r), 1, block);
+          if (glow > 0) tw.addEmitter(ox + ci * 6 + c, oy + (6 - r), 1, glow, glow * 0.9, glow * 0.7);
+        }
       }
     });
   });
