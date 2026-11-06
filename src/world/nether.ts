@@ -13,6 +13,7 @@ export const NW = {
   Z_START: 10, Z_END: 206,
   CEIL: 34,
   SIGN_COUNT: 9,
+  BANNER_Z: 27,
 };
 
 export interface Gate { z: number; signX: number; side: 1 | -1 }
@@ -76,7 +77,7 @@ export function generateNether(): NetherBuild {
   // ---- the causeway with rails ----
   const gates: Gate[] = [];
   const gateZs: number[] = [];
-  for (let i = 0; i < NW.SIGN_COUNT; i++) gateZs.push(34 + i * 18);
+  for (let i = 0; i < NW.SIGN_COUNT; i++) gateZs.push(46 + i * 17);
   for (let z = NW.Z_START - 2; z <= NW.Z_END + 8; z++) {
     const isGap = ((z % 37) < 3) && z > 40 && z < 190; // occasional broken edges
     for (let x = RAIL_X - 2; x <= RAIL_X + 2; x++) {
@@ -90,6 +91,13 @@ export function generateNether(): NetherBuild {
     if (z % 12 === 0) for (const x of [RAIL_X - 2, RAIL_X + 2]) for (let y = 8; y < RAIL_Y - 1; y++) w.set(x, y, z, B.NetherBricks);
     // runway lights embedded in the causeway edge
     if (z % 12 === 6 && !isGap) for (const x of [RAIL_X - 2, RAIL_X + 2]) w.set(x, RAIL_Y - 1, z, B.Glowstone);
+  }
+  // welcome arch for the "courses ahead" banner
+  {
+    const z = NW.BANNER_Z;
+    for (const x of [RAIL_X - 4, RAIL_X + 4]) for (let y = RAIL_Y - 1; y <= RAIL_Y + 7; y++) w.set(x, y, z, B.NetherBricks);
+    for (let x = RAIL_X - 4; x <= RAIL_X + 4; x++) { w.set(x, RAIL_Y + 7, z, B.NetherBricks); w.set(x, RAIL_Y + 8, z, B.RedNetherBricks); }
+    for (const x of [RAIL_X - 3, RAIL_X + 3]) { w.set(x, RAIL_Y + 6, z, B.NetherBricks); w.set(x, RAIL_Y, z, B.SeaLantern); }
   }
   // gates (fortress arches) where the signs hang
   gateZs.forEach((z, i) => {

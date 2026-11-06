@@ -5,6 +5,7 @@ import type { HDAtlas } from '../engine/texturesHD';
 import { generateOverworld, OW, buildTitleGeometry, OverworldBuild, torchOffset } from './overworld';
 import { lampGlow, LODGE } from './house';
 import { createGlowSprites } from './glow';
+import { createMist } from './mist';
 import { createSky, createSun, createClouds } from './sky';
 import { createWater, createLakeGeometry } from './water';
 import { mulberry32 } from '../engine/rng';
@@ -59,8 +60,8 @@ export function createOverworld(atlas: THREE.DataArrayTexture, quality: Quality,
   const titleGeo = buildTitleGeometry(["JOSE'S", 'WORLD'], B.Quartz);
   const title = new THREE.Mesh(titleGeo.geo, matOpaque);
   title.castShadow = false; title.receiveShadow = true;
-  title.scale.setScalar(0.8);
-  title.position.set(64, 33, 45);
+  title.scale.setScalar(0.65);
+  title.position.set(68, 39, 33);
   scene.add(title);
 
   // ---- sky / sun ----
@@ -76,7 +77,7 @@ export function createOverworld(atlas: THREE.DataArrayTexture, quality: Quality,
   scene.add(clouds);
 
   // ---- lights ----
-  const hemi = new THREE.HemisphereLight('#ffd6ad', '#4d3a2a', 0.62);
+  const hemi = new THREE.HemisphereLight('#ffd6ad', '#4d3a2a', 0.78);
   scene.add(hemi);
   const sunLight = new THREE.DirectionalLight('#ffcf98', 4.6);
   sunLight.castShadow = true;
@@ -90,6 +91,11 @@ export function createOverworld(atlas: THREE.DataArrayTexture, quality: Quality,
   sunLight.shadow.normalBias = 0.06;
   sunLight.shadow.radius = 2;
   scene.add(sunLight); scene.add(sunLight.target);
+  // soft fill from the lake side so facades in shade stay legible (no shadows)
+  const fill = new THREE.DirectionalLight('#ffd9b8', 0.7);
+  fill.position.set(64 + 30, 40, 64 + 90);
+  fill.target.position.set(64, 20, 50);
+  scene.add(fill, fill.target);
 
   // ---- water ----
   const lakeGeo = createLakeGeometry((x, z) => build.world.heightAt(x, z) < OW.WATER_Y, OW.SX, OW.SZ, 600);
@@ -129,7 +135,7 @@ export function createOverworld(atlas: THREE.DataArrayTexture, quality: Quality,
   // ---- flame / lantern glows ----
   const flames = createGlowSprites(
     [...build.torches.map(t => { const [ox, oz] = torchOffset(t.attach); return { x: t.x + ox + 1 / 16, y: (t.attach === 'floor' ? t.y : t.y + 0.2) + 0.7, z: t.z + oz + 1 / 16, size: 1 }; }),
-     ...build.lamps.map(l => lampGlow(l)),
+     ...build.lamps.map(l => lampGlow(l)).filter((g): g is { x: number; y: number; z: number; size: number } => !!g),
      ...build.lanterns.map(l => ({ x: l.x + 4 / 16, y: OW.GROUND + 2.3, z: l.z + 0.5, size: 1.6 }))],
     '#ffb347', 1.0, 1.2,
   );
@@ -162,6 +168,10 @@ export function createOverworld(atlas: THREE.DataArrayTexture, quality: Quality,
     scene.add(pl);
   }
 
+  // ---- ground mist over the lake and lawn ----
+  const mist = createMist(new THREE.Vector3(64, OW.WATER_Y + 1.1, 78), [150, 110]);
+  scene.add(mist.group);
+
   // ---- fireplace light ----
   const fireLight = new THREE.PointLight('#ff8a3c', 14, 12, 1.8);
   fireLight.position.set(LODGE.fireplace.x + 0.4, LODGE.floorY + 0.8, 47.5);
@@ -192,6 +202,7 @@ export function createOverworld(atlas: THREE.DataArrayTexture, quality: Quality,
       particles.update(t);
       flames.update(t);
       fireLight.intensity = 12 + Math.sin(t * 9.3) * 2 + Math.sin(t * 23.7) * 1.2;
+      mist.update(t);
     },
   };
   return bundle;

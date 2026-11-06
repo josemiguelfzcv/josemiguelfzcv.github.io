@@ -30,8 +30,8 @@ export interface Key { at: number; pos: [number, number, number]; look: [number,
 
 /** Overworld camera path (first person). Positions are world units; eye height ≈ 1.6 above the floor. */
 export const OVERWORLD_KEYS: Key[] = [
-  { at: 0.00, pos: [64.5, 17.7, 98.5], look: [64.5, 23.5, 50], fov: 68 },
-  { at: 0.10, pos: [64.5, 17.7, 95.0], look: [64.5, 22.0, 50], fov: 68 },
+  { at: 0.00, pos: [64.5, 17.7, 98.5], look: [64.5, 25.5, 50], fov: 68 },
+  { at: 0.10, pos: [64.5, 17.7, 95.0], look: [64.5, 23.0, 50], fov: 68 },
   { at: 0.17, pos: [64.6, 17.65, 78.0], look: [65.0, 19.0, 52], fov: 70 },
   { at: 0.22, pos: [64.9, 17.6, 62.0], look: [65.0, 18.0, 52], fov: 70 },
   { at: 0.245, pos: [65.0, 17.6, 57.4], look: [65.0, 17.6, 50], fov: 70 },

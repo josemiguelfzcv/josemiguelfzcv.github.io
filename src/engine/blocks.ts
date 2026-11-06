@@ -13,7 +13,7 @@ export const enum B {
   Painting, Screen, Black,
   Lantern, // emits light; rendered as a full block for simplicity (used inside details)
   SeaLantern,
-  Plaster, DarkOakPlanks, Shingles,
+  Plaster, DarkOakPlanks, Shingles, Slate, SpruceLeaves,
   COUNT,
 }
 
@@ -90,6 +90,8 @@ def(B.Lantern, { tiles: all('lantern'), opaque: false, transparent: true, light:
 def(B.Plaster, { tiles: all('plaster'), opaque: true });
 def(B.DarkOakPlanks, { tiles: all('dark_oak_planks'), opaque: true });
 def(B.Shingles, { tiles: all('shingles'), opaque: true });
+def(B.Slate, { tiles: all('slate'), opaque: true });
+def(B.SpruceLeaves, { tiles: all('spruce_leaves'), opaque: true });
 def(B.SeaLantern, { tiles: all('sea_lantern'), opaque: true, light: [3, 7, 11] });
 
 export const isOpaque = (id: number) => id !== B.Air && !!BLOCKS[id]?.opaque;

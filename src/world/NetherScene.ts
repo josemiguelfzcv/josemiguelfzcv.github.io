@@ -92,6 +92,20 @@ export function createNether(atlas: THREE.DataArrayTexture, quality: Quality, hd
   const signs: FallingSign[] = build.gates.map((gate, i) => createFallingSign(gate, COURSES[i % COURSES.length], matOpaque));
   for (const s of signs) scene.add(s.group);
 
+  // ---- "courses ahead" banner hanging from the welcome arch ----
+  {
+    const tex = createBannerTexture('Courses', 'Williams College · scroll to ride');
+    const mat = new THREE.MeshStandardMaterial({ map: tex, emissive: new THREE.Color('#ffffff'), emissiveMap: tex, emissiveIntensity: 0.6, roughness: 0.9 });
+    const side = new THREE.MeshStandardMaterial({ color: '#3a2415' });
+    const board = new THREE.Mesh(new THREE.BoxGeometry(5.6, 1.75, 0.14), [side, side, side, side, mat, mat]);
+    board.position.set(NW.RAIL_X + 0.5, NW.RAIL_Y + 4.6, NW.BANNER_Z + 0.5);
+    scene.add(board);
+    const chainG = new GeometryBuilder();
+    const cl: [number, number, number, number] = [0.3, 0.15, 0.08, 1];
+    for (const dx of [-2.4, 2.4]) addBox(chainG, [NW.RAIL_X + 0.5 + dx - 0.04, NW.RAIL_Y + 5.45, NW.BANNER_Z + 0.46], [NW.RAIL_X + 0.5 + dx + 0.04, NW.RAIL_Y + 7, NW.BANNER_Z + 0.54], null, { tiles: T.blackstone, light: cl });
+    scene.add(new THREE.Mesh(chainG.build(), matOpaque));
+  }
+
   const railPoint = (p: number) => new THREE.Vector3(NW.RAIL_X + 0.5, NW.RAIL_Y, THREE.MathUtils.lerp(NW.Z_START, NW.Z_END, p));
 
   const bundle: Nether = {
@@ -138,6 +152,26 @@ function buildCart(mat: THREE.Material) {
 }
 
 /* ------------------------- hanging course signs ------------------------- */
+
+/** A wide static banner with a title and a subtitle (the "courses ahead" announcement). */
+function createBannerTexture(title: string, sub: string): THREE.CanvasTexture {
+  const W = 1024, H = 320;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d')!;
+  for (let y = 0; y < H; y += 64) for (let x = 0; x < W; x += 64) drawTileTo(ctx, 'spruce_planks', x, y, 64);
+  ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(255, 210, 140, 0.45)'; ctx.lineWidth = 8; ctx.strokeRect(14, 14, W - 28, H - 28);
+  ctx.strokeStyle = 'rgba(255, 210, 140, 0.25)'; ctx.lineWidth = 2; ctx.strokeRect(30, 30, W - 60, H - 60);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = '600 118px "Cormorant Garamond", "Pixelify Sans", serif';
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillText(title, W / 2 + 4, 128 + 4);
+  ctx.fillStyle = '#fff1d6'; ctx.fillText(title, W / 2, 128);
+  ctx.font = '500 44px "Inter", sans-serif';
+  ctx.fillStyle = '#ffd27a'; ctx.fillText(sub.toUpperCase(), W / 2, 236);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  return tex;
+}
 
 function createSignTexture(course: Course): THREE.CanvasTexture {
   const W = 512, H = 256;

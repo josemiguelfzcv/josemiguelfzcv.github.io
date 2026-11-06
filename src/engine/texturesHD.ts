@@ -226,11 +226,11 @@ function leaves(dark: V3, light: V3): Recipe {
 function glass(): Recipe {
   return (u, v, n) => {
     const edge = Math.min(u, 1 - u, v, 1 - v);
-    const frame = smooth(0.06, 0.03, edge);
+    const frame = smooth(0.07, 0.045, edge);
     const smudge = tfbm(n, u, v, 3, 2);
-    const a = frame * 0.9 + 0.08 + smudge * 0.06;
-    const alb: V3 = frame > 0.5 ? rgb(214, 226, 230) : rgb(230, 240, 245);
-    return px(alb, 0.5 + frame * 0.1, 0.05 + smudge * 0.1, a);
+    const a = frame * 0.95 + 0.1 + smudge * 0.05;
+    const alb: V3 = frame > 0.5 ? rgb(52, 42, 36) : rgb(200, 220, 232);
+    return px(alb, 0.5 + frame * 0.15, frame > 0.5 ? 0.7 : 0.04 + smudge * 0.08, a);
   };
 }
 function wool(base: V3): Recipe {
@@ -545,6 +545,17 @@ const RECIPES: Partial<Record<TileName, Recipe>> = {
     const lip = smooth(0.0, 0.1, fv);
     return px(mul3(rgb(74, 58, 50), tone * (0.85 + f * 0.3) * (1 - gap * 0.5)), 0.3 + lip * 0.4 + f * 0.08 - gap * 0.3, 0.85);
   },
+  slate: (u, v, n, n2, s) => {
+    const rows = 4, row = Math.floor(v * rows), off = row % 2 ? 0.5 : 0;
+    const cu = u * 4 + off, col = Math.floor(cu), fu = cu - col, fv = v * rows - row;
+    const id = row * 53 + ((col % 4) + 4) % 4 * 7 + s;
+    const tone = 0.8 + idRand(id) * 0.4;
+    const f = tfbm(n2, u + idRand(id, 1), v, 14, 3, 0.5, 1, 3);
+    const gap = Math.min(fu, 1 - fu) < 0.035 ? 1 : 0;
+    const lip = smooth(0.0, 0.1, fv);
+    return px(mul3(rgb(58, 62, 78), tone * (0.85 + f * 0.3) * (1 - gap * 0.5)), 0.3 + lip * 0.4 + f * 0.08 - gap * 0.3, 0.6);
+  },
+  spruce_leaves: leaves(rgb(24, 58, 42), rgb(64, 118, 84)),
   rug: (u, v, n) => {
     const weave = (Math.sin(u * Math.PI * 48) * 0.5 + 0.5) * (Math.sin(v * Math.PI * 48) * 0.5 + 0.5);
     const edge = Math.min(u, 1 - u, v, 1 - v);

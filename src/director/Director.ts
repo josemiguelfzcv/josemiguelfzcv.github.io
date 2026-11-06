@@ -162,8 +162,8 @@ export class Director {
     let cap: string | null = null;
     if (p > 0.50 && p < 0.56) cap = 'descend';
     else if (p > 0.63 && p < 0.668) cap = 'portalHint';
-    else if (p > 0.69 && p < 0.72) cap = 'courses';
     this.ov.setCaption(cap);
+    this.ov.setChapterCard(p > 0.684 && p < 0.712);
     // portal fade
     const pf = p < 0.672 ? smooth(range(p, 0.655, 0.672)) : 1 - smooth(range(p, 0.672, 0.70));
     this.ov.setPortalFade(pf);

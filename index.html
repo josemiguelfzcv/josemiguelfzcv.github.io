@@ -16,7 +16,7 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%238a5a2b'/%3E%3Crect width='16' height='5' fill='%236fae5a'/%3E%3Crect y='5' width='16' height='1' fill='%235a8a44'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Inter:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
   </head>
   <body>
     <canvas id="gl"></canvas>
@@ -74,6 +74,13 @@
       <div id="hotspots"></div>
 
       <div id="caption" class="caption hidden"></div>
+
+      <section id="chapter-card" class="chapter-card hidden" aria-live="polite">
+        <div class="chapter-kicker" data-i18n="chapterKicker"></div>
+        <h2 class="chapter-title" data-i18n="chapterTitle"></h2>
+        <p class="chapter-sub" data-i18n="chapterSub"></p>
+        <div class="chapter-hint" data-i18n="chapterHint"></div>
+      </section>
 
       <aside id="panel-course" class="panel right hidden">
         <div class="panel-kicker"><span class="dept-chip" id="course-dept"></span> <span id="course-index"></span></div>

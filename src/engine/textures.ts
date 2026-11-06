@@ -177,7 +177,7 @@ function bricks(p: Px, brick: RGB, mortar: RGB, rows = 4, perRow = 2, variance =
 
 function glass(p: Px) {
   p.fill([220, 240, 250, 0]);
-  const edge: RGBA = [235, 250, 255, 150];
+  const edge: RGBA = [56, 44, 38, 240];
   for (let i = 0; i < TILE; i++) { p.set(i, 0, edge); p.set(i, 15, edge); p.set(0, i, edge); p.set(15, i, edge); }
   // diagonal highlight streaks
   for (let i = 2; i < 9; i++) p.set(i, 11 - i + 2, [255, 255, 255, 110]);
@@ -489,6 +489,8 @@ export const TILES = {
   cobweb: (p: Px) => cobweb(p),
   plaster: (p: Px) => { p.noise([236, 230, 220], 0.025); p.speckle([226, 220, 208], 10); },
   dark_oak_planks: (p: Px) => planks(p, [72, 48, 26]),
+  slate: (p: Px) => { p.noise([54, 58, 72], 0.1); for (let r = 0; r < 4; r++) { const y0 = r * 4; for (let x = 0; x < 16; x++) p.shade(x, y0 + 3, 0.6); const off = r % 2 ? 2 : 0; for (let x = off; x < 16; x += 4) p.shadeRect(x, y0, 1, 3, 0.75); p.shadeRect(0, y0, 16, 1, 1.12); } },
+  spruce_leaves: (p: Px) => leaves(p, [28, 62, 44], [60, 110, 78]),
   shingles: (p: Px) => { p.noise([62, 50, 44], 0.1); for (let r = 0; r < 4; r++) { const y0 = r * 4; for (let x = 0; x < 16; x++) p.shade(x, y0 + 3, 0.55); const off = r % 2 ? 2 : 0; for (let x = off; x < 16; x += 4) p.shadeRect(x, y0, 1, 3, 0.7); p.shadeRect(0, y0, 16, 1, 1.15); } },
   rug: (p: Px) => { p.noise([214, 196, 168], 0.05); p.rect(0, 0, 16, 2, [160, 74, 52]); p.rect(0, 14, 16, 2, [160, 74, 52]); p.rect(0, 0, 2, 16, [160, 74, 52]); p.rect(14, 0, 2, 16, [160, 74, 52]); for (let i = 0; i < 4; i++) { p.set(4 + i, 7 - i, [160, 74, 52]); p.set(4 + i, 8 + i, [160, 74, 52]); p.set(11 - i, 7 - i, [160, 74, 52]); p.set(11 - i, 8 + i, [160, 74, 52]); } },
   fire: (p: Px) => { p.fill([0, 0, 0, 0]); for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) { const cx = Math.abs(x - 7.5) / 7.5, t = y / 16; const w = 1 - t * 0.9; if (cx < w && p.rng() < 0.85) p.set(x, 15 - y, t > 0.55 ? [255, 230, 120] : t > 0.25 ? [255, 160, 50] : [230, 80, 20]); } },

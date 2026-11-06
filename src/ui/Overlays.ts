@@ -25,6 +25,7 @@ export class Overlays {
   endCard = document.getElementById('end-card')!;
   titleCard = document.getElementById('title-card')!;
   portalFade = document.getElementById('portal-fade')!;
+  chapterCard = document.getElementById('chapter-card')!;
   hotspotsEl = document.getElementById('hotspots')!;
   hotspotEls: HTMLElement[] = [];
   onNavigate: ((p: number) => void) | null = null;
@@ -130,6 +131,7 @@ export class Overlays {
     this.caption.classList.remove('hidden');
   }
   setPortalFade(a: number) { this.portalFade.style.opacity = a.toFixed(3); }
+  setChapterCard(on: boolean) { this.chapterCard.classList.toggle('hidden', !on); }
   setEnd(on: boolean) { this.endCard.classList.toggle('hidden', !on); }
   setTitleCard(on: boolean) { this.titleCard.classList.toggle('hidden', !on); }
 }

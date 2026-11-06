@@ -4,7 +4,7 @@ import { World } from '../engine/world';
 import { mulberry32, Noise2D, Rng } from '../engine/rng';
 import { GeometryBuilder, addBox, addCross, addWallQuad, meshWorld } from '../engine/mesher';
 import { TILE_INDEX } from '../engine/textures';
-import { LODGE, Lamp, buildLodge, furnishLodge, lodgeLamps, lampLight, buildLampDetails } from './house';
+import { LODGE, Lamp, buildManor, furnishManor, manorLamps, lampLight, buildLampDetails } from './house';
 
 export const OW = {
   SX: 128, SY: 48, SZ: 128,
@@ -46,13 +46,14 @@ export function generateOverworld(): OverworldBuild {
     h += north * north * 12 + noise2.fbm(x / 12, z / 12, 3) * north * 8;
     const edge = Math.max(0, (x - 108) / 20, (20 - x) / 20);
     h += edge * edge * 8;
-    // flat lawn for the lodge (one below the boardwalk level so the deck reads as raised)
-    const dx = x - 64, dz = z - 47;
-    const plateau = 1 - THREE.MathUtils.smoothstep(Math.hypot(dx * 0.85, dz), 14, 23);
+    // flat lawn for the manor (one below the terrace level)
+    const dx = x - 67, dz = z - 46;
+    const plateau = 1 - THREE.MathUtils.smoothstep(Math.hypot(dx * 0.8, dz), 17, 26);
     h = h * (1 - plateau) + (OW.GROUND - 1) * plateau;
-    // lake basin: an organic blob south of the house
-    const lx = (x - 64) / 30, lz = (z - 80) / 17;
-    const lake = 1 - THREE.MathUtils.smoothstep(Math.hypot(lx, lz) + (noise2.fbm(x / 10, z / 10, 2) - 0.5) * 0.5, 0.55, 1.05);
+    // lake basin: an organic blob reaching the manor's terrace
+    const lx = (x - 64) / 32, lz = (z - 82) / 23;
+    let lake = 1 - THREE.MathUtils.smoothstep(Math.hypot(lx, lz) + (noise2.fbm(x / 10, z / 10, 2) - 0.5) * 0.5, 0.55, 1.05);
+    if (z >= 59 && z <= 74 && Math.abs(x - 64) < 14 - Math.max(0, 59 - z)) lake = Math.max(lake, 1 - THREE.MathUtils.smoothstep(Math.abs(x - 64), 10, 14));
     h = h * (1 - lake) + 9.5 * lake;
     // spawn shore flat spot
     const sdx = x - 64, sdz = z - 103;
@@ -76,32 +77,41 @@ export function generateOverworld(): OverworldBuild {
     }
   }
 
-  // ---------- trees ----------
+  // ---------- trees: tall pines behind and beside the manor, oaks elsewhere ----------
   const trees: [number, number][] = [];
-  const canPlaceTree = (x: number, z: number) => {
+  const canPlaceTree = (x: number, z: number, spacing = 5) => {
     if (x < 3 || z < 3 || x > OW.SX - 4 || z > OW.SZ - 4) return false;
     const h = height[z * OW.SX + x];
     if (w.get(x, h, z) !== B.Grass) return false;
-    if (x > H.x0 - 6 && x < H.x1 + 6 && z > H.z0 - 7 && z < H.z1 + 7) return false;   // around the lodge
-    if (Math.abs(x - 64) < 7 && z > 50 && z < 112) return false;                         // view corridor + bridge
-    for (const [tx, tz] of trees) if (Math.hypot(tx - x, tz - z) < 5) return false;
+    if (x > LODGE.tower.x0 - 5 && x < LODGE.wing.x1 + 5 && z > LODGE.tower.z0 - 6 && z < H.z1 + 6) return false;   // around the manor
+    if (Math.abs(x - 64) < 7 && z > 50 && z < 112) return false;                                                   // view corridor + boardwalk
+    for (const [tx, tz] of trees) if (Math.hypot(tx - x, tz - z) < spacing) return false;
     return true;
   };
+  // keep the low sun visible from the spawn: no tall trees along the line toward the sun
+  const sunCorridor = (x: number, z: number) => {
+    const dx = x - 64, dz = z - 100;
+    const along = dx * -0.6 + dz * -0.8, perp = Math.abs(-0.8 * dx + 0.6 * dz);
+    return along > 0 && along < 90 && perp < 13;
+  };
   let attempts = 0;
-  while (trees.length < 150 && attempts++ < 6000) {
+  while (trees.length < 190 && attempts++ < 9000) {
     const x = Math.floor(rng() * OW.SX), z = Math.floor(rng() * OW.SZ);
-    // denser on the sides to frame the view, sparse near the lake shore
-    const side = Math.abs(x - 64) > 22 || z < 40;
-    if (!side && rng() < 0.75) continue;
-    if (canPlaceTree(x, z)) { trees.push([x, z]); placeOak(w, x, height[z * OW.SX + x] + 1, z, rng); }
+    const behind = z < 36, side = Math.abs(x - 64) > 24;
+    const pineZone = (behind || side) && !sunCorridor(x, z);
+    if (!behind && !side && rng() < 0.8) continue;
+    if (!canPlaceTree(x, z, pineZone ? 4 : 5)) continue;
+    trees.push([x, z]);
+    const y = height[z * OW.SX + x] + 1;
+    if (pineZone && rng() < 0.75) placePine(w, x, y, z, rng); else placeOak(w, x, y, z, rng, rng() < 0.3);
   }
-  // two hero trees framing the spawn shot
-  for (const [x, z] of [[50, 96], [79, 94], [44, 70], [86, 68]] as [number, number][]) {
+  // hero trees framing the spawn shot
+  for (const [x, z] of [[50, 96], [79, 94], [86, 68], [41, 66]] as [number, number][]) {
     if (canPlaceTree(x, z)) { trees.push([x, z]); placeOak(w, x, height[z * OW.SX + x] + 1, z, rng, true); }
   }
 
   // ---------- the lodge ----------
-  buildLodge(w, rng);
+  buildManor(w, rng);
 
   // ---------- boardwalk from the deck across the lake ----------
   const bx = OW.BRIDGE.x;
@@ -133,7 +143,7 @@ export function generateOverworld(): OverworldBuild {
   // ---------- light ----------
   const torches = dungeonTorches();
   for (const t of torches) w.addEmitter(t.x, t.y, t.z, 14, 10, 5);
-  const lamps = lodgeLamps();
+  const lamps = manorLamps();
   for (const l of lamps) { const c = lampLight(l); w.addEmitter(l.x, Math.floor(l.y), l.z, c[0], c[1], c[2]); }
   const lanterns: { x: number; y: number; z: number }[] = [];
   bridgeZs.forEach((z, i) => {
@@ -170,7 +180,7 @@ export function generateOverworld(): OverworldBuild {
       addBox(det, [x + 6 / 16, OW.GROUND + 0.6, z], [x + 10 / 16, OW.GROUND + 0.8, z + 1], w, { tiles: T.oak_planks });
     }
   }
-  furnishLodge(det, w);
+  furnishManor(det, w);
   buildLampDetails(det, w, lamps);
   furnishDungeon(det, w);
 
@@ -180,7 +190,7 @@ export function generateOverworld(): OverworldBuild {
     const h = height[z * OW.SX + x];
     if (w.get(x, h, z) !== B.Grass || w.get(x, h + 1, z) !== B.Air) continue;
     const r = rng();
-    const nearHouse = x > H.x0 - 3 && x < H.x1 + 3 && z > H.z0 - 3 && z < H.z1 + 5;
+    const nearHouse = x > LODGE.tower.x0 - 3 && x < LODGE.wing.x1 + 3 && z > LODGE.tower.z0 - 3 && z < H.z1 + 5;
     if (nearHouse) continue;
     const density = noise2.fbm(x / 9, z / 9, 2);
     if (r < density * 0.55) {
@@ -200,6 +210,27 @@ export function generateOverworld(): OverworldBuild {
 }
 
 /* ---------------- trees ---------------- */
+/** Tall conifer: spruce trunk with a layered, slightly irregular conical canopy. */
+function placePine(w: World, x: number, y: number, z: number, rng: Rng) {
+  const trunk = 10 + Math.floor(rng() * 6);
+  for (let i = 0; i < trunk; i++) w.set(x, y + i, z, B.SpruceLog);
+  const top = y + trunk;
+  // canopy from the top down: radius grows every two layers
+  for (let dy = 0; dy >= -(trunk - 3); dy--) {
+    const k = -dy;
+    let r = k === 0 ? 0 : Math.min(3, 1 + Math.floor(k / 2.2));
+    if (k % 2 === 1 && k > 2) r = Math.max(1, r - 1);        // alternating tiers
+    for (let dx = -r; dx <= r; dx++) for (let dz = -r; dz <= r; dz++) {
+      const d = Math.hypot(dx, dz);
+      if (d > r + 0.3) continue;
+      if (d > r - 0.4 && rng() < 0.35) continue;
+      const px = x + dx, py = top + dy, pz = z + dz;
+      if (w.get(px, py, pz) === B.Air) w.set(px, py, pz, B.SpruceLeaves);
+    }
+  }
+  w.set(x, top + 1, z, B.SpruceLeaves);
+}
+
 function placeOak(w: World, x: number, y: number, z: number, rng: Rng, big = false) {
   const trunk = (big ? 6 : 4) + Math.floor(rng() * 2);
   for (let i = 0; i < trunk; i++) w.set(x, y + i, z, B.OakLog);
